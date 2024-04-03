@@ -1,0 +1,19 @@
+package components 
+
+templ Base() {
+    <!DOCTYPE html>
+	<html lang="en" data-theme="dark">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <script src="https://cdn.tailwindcss.com"></script>
+			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
+			<meta name="description" content="Skoof Project"/>
+			<meta name="google" content="notranslate"/>
+            <title>Skoof</title>
+		</head>
+		<body class="sample-transition" hx-boost="true">
+            { children... }
+		</body>
+	</html>
+}
