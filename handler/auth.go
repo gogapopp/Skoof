@@ -1,17 +1,23 @@
 package handler
 
 import (
+	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/gogapopp/Skoof/components/auth_pages"
+	"github.com/gogapopp/Skoof/lib/jwt"
 	"github.com/gogapopp/Skoof/model"
 	"github.com/gogapopp/Skoof/storage"
 )
+
+type Service interface {
+	CreateUser(ctx context.Context, user model.User) error
+	GetUser(ctx context.Context, emailOrUsername, password string) (model.User, error)
+}
 
 func SignInPage(s Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -19,13 +25,12 @@ func SignInPage(s Service) http.HandlerFunc {
 		case http.MethodPost:
 			emailOrUsername := r.FormValue("email_or_username")
 			userPassword := r.FormValue("password")
-			log.Print(emailOrUsername, userPassword)
 			// add validation
 			// add session
 			// update
 			user, err := s.GetUser(r.Context(), emailOrUsername, generatePasswordHash(userPassword))
 			if err != nil {
-				// add error component
+				// TODO: add error component
 				if errors.Is(storage.ErrUserNotExist, err) {
 					http.Error(w, "invalid email/username or password", http.StatusBadRequest)
 					return
@@ -34,10 +39,21 @@ func SignInPage(s Service) http.HandlerFunc {
 				return
 			}
 
-			_ = user
-			// TODO:
-			jwtToken := ""
-			w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", jwtToken))
+			jwtToken, err := jwt.GenerateJWTToken(user.UserID, emailOrUsername, userPassword)
+			if err != nil {
+				http.Error(w, "something went wrong", http.StatusInternalServerError)
+				return
+			}
+
+			cookie := &http.Cookie{
+				Name:     "ssid",
+				Value:    jwtToken,
+				Path:     "/",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				Secure:   true}
+			http.SetCookie(w, cookie)
+
 			http.Redirect(w, r, "/skoof", http.StatusSeeOther)
 			return
 

@@ -30,7 +30,7 @@ func New() (*DB, error) {
 
 	stmp, err := db.Prepare(`
 	CREATE TABLE IF NOT EXISTS user (
-		user_id SERIAL PRIMARY KEY,
+		user_id INTEGER PRIMARY KEY AUTOINCREMENT,
 		email VARCHAR(128),
 		username VARCHAR(128),
 		password VARCHAR(128),
@@ -64,7 +64,7 @@ func (db *DB) GetUser(ctx context.Context, emailOrUsername, password string) (mo
 	var user model.User
 	rows := db.Conn.QueryRowContext(ctx, query, emailOrUsername, emailOrUsername, password)
 
-	err := rows.Scan(&user.Email, &user.Username, &user.Password)
+	err := rows.Scan(&user.UserID, &user.Email, &user.Username, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, storage.ErrUserNotExist

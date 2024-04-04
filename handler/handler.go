@@ -1,17 +1,11 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gogapopp/Skoof/components"
-	"github.com/gogapopp/Skoof/model"
+	"github.com/gogapopp/Skoof/handler/middlewares"
 )
-
-type Service interface {
-	CreateUser(ctx context.Context, user model.User) error
-	GetUser(ctx context.Context, emailOrUsername, password string) (model.User, error)
-}
 
 func HomePage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +27,13 @@ func SkoofPage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
+			v, ok := r.Context().Value(middlewares.UserIDKey).(string)
+			if !ok {
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+			_ = v
+			// TODO:
 			if err := render(r.Context(), w, components.Home("Skoof")); err != nil {
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
