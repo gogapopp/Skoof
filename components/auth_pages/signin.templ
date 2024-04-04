@@ -1,6 +1,8 @@
-package components
+package auth_pages
 
-templ LoginPage() {
+import "github.com/gogapopp/Skoof/components/layout"
+
+templ SignIn() {
     <section class="card w-fit bg-base-200 shadow-xl mx-auto mb-8">
 		<div class="card-body pb-2">
 			<h1 class="card-title border-b border-b-slate-600 pb-[4px]">
@@ -14,11 +16,11 @@ templ LoginPage() {
  				method="post"
 			>
 				<label class="flex flex-col justify-start gap-2">
-					Email:
+					Email or Username:
 					<input
  						class="input input-bordered input-primary bg-slate-800"
- 						type="email"
- 						name="email"
+ 						type="email_or_username"
+ 						name="email_or_username"
 					/>
 				</label>
 				<label class="flex flex-col justify-start gap-2">
@@ -37,8 +39,8 @@ templ LoginPage() {
 	</section>
 }
 
-templ LoginPageBase(cmp templ.Component) {
-    @Base() {
+templ SignInBase(cmp templ.Component) {
+    @layout.Base() {
         @cmp
     }
 }

@@ -1,8 +1,8 @@
 test:
 	@go test -v ./...
 
-templ:
+templ-generate:
 	@templ generate
 
-run: templ
+run: templ-generate
 	@go run cmd/main.go

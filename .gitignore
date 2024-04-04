@@ -1,3 +1,5 @@
+.env
 tmp
 bin
-# need to add sqlite database file
+
+storage.db

@@ -1,6 +1,8 @@
 package components
 
-templ IndexPage(title string) {
+import "github.com/gogapopp/Skoof/components/layout"
+
+templ Home(title string) {
     <!DOCTYPE html>
 	<html lang="en" data-theme="dark">
 		<head>
@@ -23,8 +25,8 @@ templ IndexPage(title string) {
 	</html>
 }
 
-templ IndexPageBase(cmp templ.Component) {
-    @Base() {
+templ HomeBase(cmp templ.Component) {
+    @layout.Base() {
         @cmp
     }
 }

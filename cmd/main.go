@@ -7,25 +7,46 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/gogapopp/Skoof/handler"
+	"github.com/gogapopp/Skoof/handler/middlewares"
+	"github.com/gogapopp/Skoof/service"
+	"github.com/gogapopp/Skoof/storage/sqlite"
 )
 
+const addr = ":8080"
+
 func main() {
+	db, err := sqlite.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Conn.Close()
+
+	service := service.New(db)
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 
-	r.Get("/", handler.IndexPage())
+	r.Get("/", handler.HomePage())
 
-	r.Get("/signin", handler.SignInPage())
-	r.Post("/signin", handler.SignInPage())
+	r.Get("/signin", handler.SignInPage(service))
+	r.Post("/signin", handler.SignInPage(service))
 
-	r.Get("/signup", handler.SignUpPage())
-	r.Post("/signup", handler.SignUpPage())
+	r.Get("/signup", handler.SignUpPage(service))
+	r.Post("/signup", handler.SignUpPage(service))
+
+	r.Group(func(r chi.Router) {
+		r.Use(middlewares.AuthMiddleware)
+
+		r.Get("/skoof", handler.SkoofPage())
+		r.Post("/skoof", handler.SkoofPage())
+	})
 
 	srv := http.Server{
-		Addr:    ":8080",
+		Addr:    addr,
 		Handler: r,
 	}
+	log.Println("server running at", addr)
 	log.Fatal(srv.ListenAndServe())
 }
