@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gogapopp/Skoof/components/auth_pages"
-	"github.com/gogapopp/Skoof/lib/jwt"
-	"github.com/gogapopp/Skoof/model"
-	"github.com/gogapopp/Skoof/storage"
+	"github.com/gogapopp/Skoof/internal/components/auth_pages"
+	"github.com/gogapopp/Skoof/internal/lib/jwt"
+	"github.com/gogapopp/Skoof/internal/model"
+	"github.com/gogapopp/Skoof/internal/storage"
 )
 
 type Service interface {

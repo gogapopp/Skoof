@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
-	"github.com/gogapopp/Skoof/handler"
-	"github.com/gogapopp/Skoof/handler/middlewares"
-	"github.com/gogapopp/Skoof/service"
-	"github.com/gogapopp/Skoof/storage/sqlite"
+	"github.com/gogapopp/Skoof/internal/handler"
+	"github.com/gogapopp/Skoof/internal/handler/middlewares"
+	"github.com/gogapopp/Skoof/internal/service"
+	"github.com/gogapopp/Skoof/internal/storage/sqlite"
 )
 
 const addr = ":8080"
@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Conn.Close()
+	defer db.Close()
 
 	service := service.New(db)
 

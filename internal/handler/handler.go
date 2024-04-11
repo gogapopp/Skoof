@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/gogapopp/Skoof/components"
-	"github.com/gogapopp/Skoof/handler/middlewares"
+	"github.com/gogapopp/Skoof/internal/components"
+	"github.com/gogapopp/Skoof/internal/handler/middlewares"
 )
 
 func HomePage() http.HandlerFunc {

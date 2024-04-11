@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/gogapopp/Skoof/model"
+	"github.com/gogapopp/Skoof/internal/model"
 )
 
 type Storager interface {

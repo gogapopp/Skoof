@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gogapopp/Skoof/lib/jwt"
+	"github.com/gogapopp/Skoof/internal/lib/jwt"
 )
 
 type CtxKeyUserID int
@@ -22,8 +22,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 				http.Error(w, "cookie not found", http.StatusBadRequest)
 			default:
 				http.Error(w, "server error", http.StatusInternalServerError)
+				return
 			}
-			return
 		}
 
 		jwtToken := cookie.Value
