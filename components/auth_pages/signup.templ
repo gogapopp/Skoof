@@ -2,12 +2,17 @@ package auth_pages
 
 import "github.com/gogapopp/Skoof/components/layout"
 
-templ SignUp() {
+templ SignUp(errMsg string) {
     <section class="card w-fit bg-base-200 shadow-xl mx-auto mb-8">
 		<div class="card-body pb-2">
 			<h1 class="card-title border-b border-b-slate-600 pb-[4px]">
 				Register User
 			</h1>
+			if errMsg != "" {
+				<div class="alert alert-error">
+					{ errMsg }
+				</div>
+			}
 			<form
  				hx-swap="transition:true"
  				class="rounded-xl drop-shadow-xl flex flex-col gap-4 w-96 p-8"

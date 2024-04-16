@@ -4,7 +4,10 @@ test:
 templ-generate:
 	@templ generate
 
-stop:
+docker-run:
+	@docker-compose up
+
+docker-stop:
 	@docker-compose down
 
 run: templ-generate

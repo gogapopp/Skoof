@@ -17,7 +17,7 @@ import (
 var valErr validator.ValidationErrors
 
 type authService interface {
-	SignUp(ctx context.Context, user model.User) error
+	SignUp(ctx context.Context, user model.SignUpUser) error
 	SignIn(ctx context.Context, user model.SignInUser) (string, error)
 }
 
@@ -28,21 +28,20 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 
 		switch r.Method {
 		case http.MethodPost:
-			// add validation
-			// add session
-			// update
 			userName := r.FormValue("username")
 			userEmail := r.FormValue("email")
 			userPassword := r.FormValue("password")
 			userPasswordConfirm := r.FormValue("password_confirm")
 
 			if userPassword != userPasswordConfirm {
-				// TODO: add error component
-				http.Error(w, "passwords doesn't equals", http.StatusBadRequest)
-				return
+				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn("passwords doesn't equals"))); err != nil {
+					logger.Errorf("%s: %w", op, err)
+					http.Error(w, "internal server error", http.StatusInternalServerError)
+					return
+				}
 			}
 
-			err := a.SignUp(ctx, model.User{
+			err := a.SignUp(ctx, model.SignUpUser{
 				Username:     userName,
 				Email:        userEmail,
 				PasswordHash: userPassword,
@@ -51,28 +50,32 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			})
 			if err != nil {
 				logger.Errorf("%s: %w", op, err)
-				// TODO: add error component
+				var errMsg string
 				if errors.Is(err, storage.ErrUserExists) {
-					http.Error(w, "user already exists", http.StatusBadRequest)
+					errMsg = "user already exists"
+				} else if errors.As(err, &valErr) {
+					errMsg = "email, password and username is required field"
+				} else if errors.Is(err, service.ErrUndefinedRole) {
+					errMsg = "undefined role (available roles: admin, user)"
+				} else {
+					errMsg = "something went wrong"
+				}
+				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+					logger.Errorf("%s: %w", op, err)
+					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
 				}
-				if errors.As(err, &valErr) {
-					http.Error(w, "email, password and username is required field", http.StatusBadRequest)
-					return
-				}
-				if errors.Is(err, service.ErrUndefinedRole) {
-					http.Error(w, "undefined role (available roles: admin, user)", http.StatusBadRequest)
-					return
-				}
-				http.Error(w, "error create user", http.StatusBadRequest)
-				return
 			}
 
 			http.Redirect(w, r, "/signin", http.StatusSeeOther)
 			return
 
 		case http.MethodGet:
-			if err := render(r.Context(), w, auth_pages.SignUpBase(auth_pages.SignUp())); err != nil {
+			var errMsg string
+			if r.URL.Query().Get("redirected") == "true" {
+				errMsg = "you need to signin or signup"
+			}
+			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
 				logger.Errorf("%s: %w", op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
@@ -94,9 +97,6 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 		case http.MethodPost:
 			emailOrUsername := r.FormValue("email_or_username")
 			userPassword := r.FormValue("password")
-			// add validation
-			// add session
-			// update
 			token, err := a.SignIn(ctx, model.SignInUser{
 				Email:        emailOrUsername,
 				Username:     emailOrUsername,
@@ -104,17 +104,19 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			})
 			if err != nil {
 				logger.Errorf("%s: %w", op, err)
-				// TODO: add error component
+				var errMsg string
 				if errors.Is(err, storage.ErrUserNotExist) {
-					http.Error(w, "invalid email/username or password", http.StatusBadRequest)
+					errMsg = "invalid email/username or password"
+				} else if errors.As(err, &valErr) {
+					errMsg = "email or username and password is required field"
+				} else {
+					errMsg = "something went wrong"
+				}
+				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+					logger.Errorf("%s: %w", op, err)
+					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
 				}
-				if errors.As(err, &valErr) {
-					http.Error(w, "email or username and password is required field", http.StatusBadRequest)
-					return
-				}
-				http.Error(w, "something went wrong", http.StatusInternalServerError)
-				return
 			}
 
 			cookie := &http.Cookie{
@@ -130,7 +132,11 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			return
 
 		case http.MethodGet:
-			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn())); err != nil {
+			var errMsg string
+			if r.URL.Query().Get("redirected") == "true" {
+				errMsg = "you need to signin or signup"
+			}
+			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
 				logger.Errorf("%s: %w", op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return

@@ -9,7 +9,7 @@ import (
 	"github.com/gogapopp/Skoof/internal/model"
 )
 
-func (a *authService) SignUp(ctx context.Context, user model.User) error {
+func (a *authService) SignUp(ctx context.Context, user model.SignUpUser) error {
 	const op = "service.auth.SignUp"
 	err := a.validator.Struct(user)
 	if err != nil {

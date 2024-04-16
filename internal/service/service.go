@@ -11,7 +11,7 @@ import (
 var ErrUndefinedRole = errors.New("undefined role")
 
 type authStorager interface {
-	SignUp(ctx context.Context, user model.User) error
+	SignUp(ctx context.Context, user model.SignUpUser) error
 	SignIn(ctx context.Context, user model.SignInUser) (int, string, error)
 }
 

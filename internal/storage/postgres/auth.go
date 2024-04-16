@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (s *repository) SignUp(ctx context.Context, user model.User) error {
+func (s *repository) SignUp(ctx context.Context, user model.SignUpUser) error {
 	const (
 		op    = "postgres.auth.SignUp"
 		query = "INSERT INTO users (email, username, password_hash, created_at, role) VALUES ($1, $2, $3, $4, $5);" // TODO: add metainfo

@@ -3,8 +3,8 @@ package model
 import "time"
 
 type (
-	// User the user model for SignUpPage and SignInPage handlers.
-	User struct {
+	// SignUpUser the user model for SignInPage handler.
+	SignUpUser struct {
 		UserID       int       `json:""`
 		Email        string    `json:"email" validate:"required"`
 		Username     string    `json:"username" validate:"required"`
@@ -13,6 +13,7 @@ type (
 		MetaInfo     string    `json:""`
 		Role         string    `json:""`
 	}
+	// SignInUser the user model for SignInPage handler.
 	SignInUser struct {
 		Email        string `json:"email"`
 		Username     string `json:"username"`
