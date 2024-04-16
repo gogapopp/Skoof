@@ -25,7 +25,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 			switch {
 			case errors.Is(err, http.ErrNoCookie):
-				http.Error(w, "cookie not found", http.StatusBadRequest)
+				http.Redirect(w, r, "/signin", http.StatusTemporaryRedirect)
+				return
 			default:
 				http.Error(w, "server error", http.StatusInternalServerError)
 				return
