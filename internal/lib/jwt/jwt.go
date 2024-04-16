@@ -18,12 +18,14 @@ const (
 )
 
 type tokenClaims struct {
+	Role   string
 	UserID int
 	jwt.RegisteredClaims
 }
 
-func GenerateJWTToken(userID int, emailOrLogin, password string) (string, error) {
+func GenerateJWTToken(userID int, role string) (string, error) {
 	claims := tokenClaims{
+		role,
 		userID,
 		jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -38,7 +40,7 @@ func GenerateJWTToken(userID int, emailOrLogin, password string) (string, error)
 	return ss, nil
 }
 
-func ParseJWTToken(userJWTToken string) (int, error) {
+func ParseJWTToken(userJWTToken string) (int, string, error) {
 	token, err := jwt.ParseWithClaims(userJWTToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrSignatureInvalid
@@ -46,9 +48,9 @@ func ParseJWTToken(userJWTToken string) (int, error) {
 		return []byte([]byte(SECRET_KEY)), nil
 	})
 	if err != nil {
-		return 0, err
+		return 0, "", err
 	} else if claims, ok := token.Claims.(*tokenClaims); ok {
-		return claims.UserID, nil
+		return claims.UserID, claims.Role, nil
 	}
-	return 0, errUnknownClaimsType
+	return 0, "", errUnknownClaimsType
 }

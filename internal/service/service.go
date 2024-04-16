@@ -2,28 +2,31 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"github.com/go-playground/validator"
 	"github.com/gogapopp/Skoof/internal/model"
 )
 
-type Storager interface {
-	CreateUser(ctx context.Context, user model.User) error
-	GetUser(ctx context.Context, emailOrUsername, password string) (model.User, error)
+var ErrUndefinedRole = errors.New("undefined role")
+
+type authStorager interface {
+	SignUp(ctx context.Context, user model.User) error
+	SignIn(ctx context.Context, user model.SignInUser) (int, string, error)
 }
 
-type Service struct {
-	store Storager
+type authService struct {
+	authStore  authStorager
+	validator  *validator.Validate
+	passSecret string
+	jwtSecret  string
 }
 
-func New(storage Storager) *Service {
-	return &Service{
-		store: storage,
+func New(passSecret, jwtSecret string, authStorage authStorager) *authService {
+	return &authService{
+		authStore:  authStorage,
+		validator:  validator.New(),
+		passSecret: passSecret,
+		jwtSecret:  jwtSecret,
 	}
-}
-
-func (s *Service) CreateUser(ctx context.Context, user model.User) error {
-	return s.store.CreateUser(ctx, user)
-}
-func (s *Service) GetUser(ctx context.Context, emailOrUsername, password string) (model.User, error) {
-	return s.store.GetUser(ctx, emailOrUsername, password)
 }

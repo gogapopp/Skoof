@@ -9,9 +9,15 @@ import (
 	"github.com/gogapopp/Skoof/internal/lib/jwt"
 )
 
-type CtxKeyUserID int
+type (
+	CtxKeyUserRole string
+	CtxKeyUserID   int
+)
 
-const UserIDKey CtxKeyUserID = 0
+const (
+	UserRoleKey CtxKeyUserRole = ""
+	UserIDKey   CtxKeyUserID   = 0
+)
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
@@ -28,13 +34,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		jwtToken := cookie.Value
 
-		userID, err := jwt.ParseJWTToken(jwtToken)
+		userID, role, err := jwt.ParseJWTToken(jwtToken)
 		if err != nil {
 			http.Error(w, "invalid authorization token", http.StatusUnauthorized)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserIDKey, fmt.Sprint(userID))
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, UserRoleKey, fmt.Sprint(role))
+		ctx = context.WithValue(ctx, UserIDKey, fmt.Sprint(userID))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

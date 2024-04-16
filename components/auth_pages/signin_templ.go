@@ -10,9 +10,9 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/gogapopp/Skoof/internal/components/layout"
+import "github.com/gogapopp/Skoof/components/layout"
 
-func SignUp() templ.Component {
+func SignIn() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -25,7 +25,7 @@ func SignUp() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"card w-fit bg-base-200 shadow-xl mx-auto mb-8\"><div class=\"card-body pb-2\"><h1 class=\"card-title border-b border-b-slate-600 pb-[4px]\">Register User\r</h1><form hx-swap=\"transition:true\" class=\"rounded-xl drop-shadow-xl flex flex-col gap-4 w-96 p-8\" action=\"\" method=\"post\"><label class=\"flex flex-col justify-start gap-2\">Username:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"text\" name=\"username\" required minlength=\"4\" maxlength=\"64\"></label> <label class=\"flex flex-col justify-start gap-2\">Email:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"email\" name=\"email\" required autofocus></label> <label class=\"flex flex-col justify-start gap-2\">Password:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"password\" name=\"password\" required minlength=\"6\"></label> <label class=\"flex flex-col justify-start gap-2\">Confirm Password:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"password_confirm\" name=\"password_confirm\" required minlength=\"6\"></label><footer class=\"card-actions justify-end\"><button class=\"badge badge-primary px-6 py-4 hover:scale-[1.1]\">Register User\r</button></footer></form></div></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"card w-fit bg-base-200 shadow-xl mx-auto mb-8\"><div class=\"card-body pb-2\"><h1 class=\"card-title border-b border-b-slate-600 pb-[4px]\">Log In\r</h1><form hx-swap=\"transition:true\" hx-headers=\"js:{&#39;X-TimeZone&#39;: Intl.DateTimeFormat().resolvedOptions().timeZone}\" class=\"rounded-xl drop-shadow-xl flex flex-col gap-4 w-96 p-8\" action=\"\" method=\"post\"><label class=\"flex flex-col justify-start gap-2\">Email or Username:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"email_or_username\" name=\"email_or_username\"></label> <label class=\"flex flex-col justify-start gap-2\">Password:\r <input class=\"input input-bordered input-primary bg-slate-800\" type=\"password\" name=\"password\"></label><footer class=\"card-actions justify-end\"><button class=\"badge badge-primary px-6 py-4 hover:scale-[1.1]\">Sign In</button></footer></form></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -36,7 +36,7 @@ func SignUp() templ.Component {
 	})
 }
 
-func SignUpBase(cmp templ.Component) templ.Component {
+func SignInBase(cmp templ.Component) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
