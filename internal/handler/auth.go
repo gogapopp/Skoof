@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-playground/validator"
 	"github.com/gogapopp/Skoof/components/auth_pages"
 	"github.com/gogapopp/Skoof/internal/model"
@@ -35,7 +36,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 
 			if userPassword != userPasswordConfirm {
 				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn("passwords doesn't equals"))); err != nil {
-					logger.Errorf("%s: %w", op, err)
+					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
 				}
@@ -49,7 +50,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				Role:         "user",
 			})
 			if err != nil {
-				logger.Errorf("%s: %w", op, err)
+				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				var errMsg string
 				if errors.Is(err, storage.ErrUserExists) {
 					errMsg = "user already exists"
@@ -61,7 +62,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 					errMsg = "something went wrong"
 				}
 				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
-					logger.Errorf("%s: %w", op, err)
+					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
 				}
@@ -76,7 +77,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				errMsg = "you need to signin or signup"
 			}
 			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
-				logger.Errorf("%s: %w", op, err)
+				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -97,13 +98,14 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 		case http.MethodPost:
 			emailOrUsername := r.FormValue("email_or_username")
 			userPassword := r.FormValue("password")
+
 			token, err := a.SignIn(ctx, model.SignInUser{
 				Email:        emailOrUsername,
 				Username:     emailOrUsername,
 				PasswordHash: userPassword,
 			})
 			if err != nil {
-				logger.Errorf("%s: %w", op, err)
+				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				var errMsg string
 				if errors.Is(err, storage.ErrUserNotExist) {
 					errMsg = "invalid email/username or password"
@@ -113,7 +115,7 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 					errMsg = "something went wrong"
 				}
 				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
-					logger.Errorf("%s: %w", op, err)
+					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
 				}
@@ -137,7 +139,7 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				errMsg = "you need to signin or signup"
 			}
 			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
-				logger.Errorf("%s: %w", op, err)
+				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
 			}
