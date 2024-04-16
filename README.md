@@ -1,13 +1,4 @@
-<p>
-<table style="border: none;">
-  <tr style="border: none;">
-    <td style="border: none; padding: 0;"><h1 style="margin-bottom: 0; margin-top: 0;" >Skoof</h1></td>
-    <td style="border: none;"><img src="docs/skoof-logo.png" alt="Skoof logo" width="20" height="20"></td>
-  </tr>
-</table>
-</p>
-<!-- border: none; -->
-<!-- style="margin: 0;" -->
+# Skoof
 
 ## **Skoof Content table**  
 
