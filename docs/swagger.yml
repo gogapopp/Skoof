@@ -1,0 +1,66 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Skoof API
+  description: API for Skoof Application
+host: localhost:8080
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/x-www-form-urlencoded
+produces:
+  - application/json
+paths:
+  /signup:
+    post:
+      summary: Register a new user
+      parameters:
+        - name: username
+          in: formData
+          description: Username for the new user
+          required: true
+          type: string
+        - name: email
+          in: formData
+          description: Email for the new user
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password for the new user
+          required: true
+          type: string
+        - name: password_confirm
+          in: formData
+          description: Password confirmation for the new user
+          required: true
+          type: string
+      responses:
+        '303':
+          description: Redirect to /signin
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /signin:
+    post:
+      summary: Sign in an existing user
+      parameters:
+        - name: email_or_username
+          in: formData
+          description: Email or Username of the user
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password of the user
+          required: true
+          type: string
+      responses:
+        '303':
+          description: Redirect to /skoof
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
