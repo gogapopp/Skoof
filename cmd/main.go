@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/middleware"
@@ -29,8 +29,10 @@ func main() {
 	mdwrs(r, middleware.RequestID, middleware.Logger, httprate.Limit(5, time.Second))
 	// initializes server routes and returns a completed http server
 	srv := handler.Routes(r, logger, authService, config)
-	log.Println("server running at", config.HTTPConfig.Addr)
-	log.Fatal(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		logger.Errorf("server shutdown with error: %w", err)
+		os.Exit(1)
+	}
 }
 
 func mdwrs(r *chi.Mux, middlewares ...func(http.Handler) http.Handler) {
