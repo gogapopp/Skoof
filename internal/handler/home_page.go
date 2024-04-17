@@ -14,7 +14,7 @@ func HomePage(logger *zap.SugaredLogger) http.HandlerFunc {
 		_ = ctx
 		switch r.Method {
 		case http.MethodGet:
-			if err := render(r.Context(), w, components.Home("Skoof")); err != nil {
+			if err := render(r.Context(), w, components.HomeBase(components.Home("For skoofs from Skoof"))); err != nil {
 				logger.Errorf("%s: %w", op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return

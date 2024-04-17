@@ -6,6 +6,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const envType = "ENV"
+
 type Config struct {
 	HTTPConfig  *httpConfig // contains a config for the http server
 	PGConfig    *pgConfig   // contains a config for postgres
@@ -20,7 +22,8 @@ func New(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	p, err := newPGConfig()
+	env := os.Getenv(envType)
+	p, err := newPGConfig(env)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,20 @@
+package skoof_pages
+
+import "github.com/gogapopp/Skoof/components/layout"
+
+templ Skoof() {
+<body class="bg-purple-700">
+    <nav class="bg-orange-700 p-6">
+        Skoof
+    </nav>
+    <main class="flex items-center justify-center h-screen">
+       Skoof
+    </main>
+</body>
+}
+
+templ SkoofBase(cmp templ.Component) {
+    @layout.Base() {
+        @cmp
+    }
+}

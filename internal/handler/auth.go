@@ -35,7 +35,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			userPasswordConfirm := r.FormValue("password_confirm")
 
 			if userPassword != userPasswordConfirm {
-				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn("passwords doesn't equals"))); err != nil {
+				if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp("passwords doesn't equals"))); err != nil {
 					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
@@ -61,7 +61,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				} else {
 					errMsg = "something went wrong"
 				}
-				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+				if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
 					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
@@ -76,7 +76,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			if r.URL.Query().Get("redirected") == "true" {
 				errMsg = "you need to signin or signup"
 			}
-			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+			if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
 				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return

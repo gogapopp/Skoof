@@ -4,8 +4,8 @@ test:
 templ-generate:
 	@templ generate
 
-docker-run:
-	@docker-compose up
+docker-pg-run:
+	@docker-compose up pg-local
 
 docker-stop:
 	@docker-compose down

@@ -3,9 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httprate"
 	"github.com/gogapopp/Skoof/internal/config"
 	"github.com/gogapopp/Skoof/internal/handler"
 	"github.com/gogapopp/Skoof/internal/handler/middlewares"
@@ -36,6 +38,7 @@ func main() {
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
+	r.Use(httprate.Limit(3, time.Second))
 
 	r.Get("/", handler.HomePage(logger))
 

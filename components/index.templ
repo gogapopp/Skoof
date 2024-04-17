@@ -3,26 +3,22 @@ package components
 import "github.com/gogapopp/Skoof/components/layout"
 
 templ Home(title string) {
-    <!DOCTYPE html>
-	<html lang="en" data-theme="dark">
-		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-            <script src="https://cdn.tailwindcss.com"></script>
-			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.10/dist/full.min.css" rel="stylesheet" type="text/css"/>
-			<meta name="description" content="Skoof Project"/>
-			<meta name="google" content="notranslate"/>
-            <title>{ title }</title>
-		</head>
-		<body class="sample-transition" hx-boost="true">
-			// <header>
-			// 	@headerComponent(title)
-			// </header>
-			<main>
-                <div>Skoof</div>
-			</main>
-		</body>
-	</html>
+<body class="bg-purple-700">
+    <nav class="bg-orange-700 p-6">
+        <div class="flex items-center justify-between">
+            <div class="text-3xl font-bold text-green-500">
+                { title }
+            </div>
+            <div class="space-x-4">
+                <a href="/signin" class="text-green-500 font-semibold">Sign In</a>
+                <a href="/signup" class="text-green-500 font-semibold">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+    <main class="flex items-center justify-center h-screen">
+        <a href="/skoof" class="text-6xl font-bold text-green-500">Community</a>
+    </main>
+</body>
 }
 
 templ HomeBase(cmp templ.Component) {
