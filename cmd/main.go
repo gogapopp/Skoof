@@ -25,7 +25,7 @@ func main() {
 	defer database.Close()
 
 	// Initializes middlewares for all server requests,
-	// other middlewares can be initialized in the Routes function, see handler.Routes.
+	// other middlewares can be initialized in the New function, see handler.New.
 	r.Use(
 		middleware.RequestID,
 		middleware.Logger,
