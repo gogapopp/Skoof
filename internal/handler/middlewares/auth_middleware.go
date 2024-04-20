@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gogapopp/Skoof/internal/lib/jwt"
+	"github.com/gogapopp/Skoof/internal/libs/jwt"
 )
 
 type (
@@ -19,6 +19,7 @@ const (
 	UserIDKey   CtxKeyUserID   = 0
 )
 
+// AuthMiddleware checks the user cookie for the JWT token.
 func AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("ssid")

@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/gogapopp/Skoof/internal/lib/jwt"
+	"github.com/gogapopp/Skoof/internal/libs/jwt"
 	"github.com/gogapopp/Skoof/internal/model"
 )
 

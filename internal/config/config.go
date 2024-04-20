@@ -8,6 +8,7 @@ import (
 
 const envType = "ENV"
 
+// Config it's structure for application settings and secrets, also setting for DB.
 type Config struct {
 	HTTPConfig  *httpConfig // contains a config for the http server
 	PGConfig    *pgConfig   // contains a config for postgres
