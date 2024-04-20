@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// contains the enviroment type (ENV=PROD or ENV=LOCAL)
 const envType = "ENV"
 
 // Config it's structure for application settings and secrets, also setting for DB.

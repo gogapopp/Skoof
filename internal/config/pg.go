@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// keys for env
 const (
 	dsnEnvProd  = "PG_DSN_PROD"
 	dsnEnvLocal = "PG_DSN_LOCAL"

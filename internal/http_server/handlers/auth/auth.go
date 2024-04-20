@@ -1,4 +1,4 @@
-package handler
+package auth
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-playground/validator"
 	"github.com/gogapopp/Skoof/components/auth_pages"
+	"github.com/gogapopp/Skoof/internal/libs/render"
 	"github.com/gogapopp/Skoof/internal/model"
 	"github.com/gogapopp/Skoof/internal/service"
 	"github.com/gogapopp/Skoof/internal/storage"
@@ -17,12 +18,12 @@ import (
 
 var valErr validator.ValidationErrors
 
-type authService interface {
+type AuthService interface {
 	SignUp(ctx context.Context, user model.SignUpUser) error
 	SignIn(ctx context.Context, user model.SignInUser) (string, error)
 }
 
-func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
+func SignUpPage(logger *zap.SugaredLogger, a AuthService) http.HandlerFunc {
 	const op = "handler.auth.SignUpPage"
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -35,7 +36,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			userPasswordConfirm := r.FormValue("password_confirm")
 
 			if userPassword != userPasswordConfirm {
-				if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp("passwords doesn't equals"))); err != nil {
+				if err := render.Render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp("passwords doesn't equals"))); err != nil {
 					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
@@ -61,7 +62,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				} else {
 					errMsg = "something went wrong"
 				}
-				if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
+				if err := render.Render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
 					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
@@ -76,7 +77,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			if r.URL.Query().Get("redirected") == "true" {
 				errMsg = "you need to signin or signup"
 			}
-			if err := render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
+			if err := render.Render(ctx, w, auth_pages.SignUpBase(auth_pages.SignUp(errMsg))); err != nil {
 				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
@@ -89,7 +90,7 @@ func SignUpPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 	}
 }
 
-func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
+func SignInPage(logger *zap.SugaredLogger, a AuthService) http.HandlerFunc {
 	const op = "handler.auth.SignInPage"
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -114,7 +115,7 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 				} else {
 					errMsg = "something went wrong"
 				}
-				if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+				if err := render.Render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
 					logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 					http.Error(w, "internal server error", http.StatusInternalServerError)
 					return
@@ -138,7 +139,7 @@ func SignInPage(logger *zap.SugaredLogger, a authService) http.HandlerFunc {
 			if r.URL.Query().Get("redirected") == "true" {
 				errMsg = "you need to signin or signup"
 			}
-			if err := render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
+			if err := render.Render(ctx, w, auth_pages.SignInBase(auth_pages.SignIn(errMsg))); err != nil {
 				logger.Errorf("[%s] %s: %w", middleware.GetReqID(ctx), op, err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return

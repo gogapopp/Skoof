@@ -8,24 +8,32 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/httprate"
 	"github.com/gogapopp/Skoof/internal/config"
-	"github.com/gogapopp/Skoof/internal/handler"
+	httpserver "github.com/gogapopp/Skoof/internal/http_server"
 	"github.com/gogapopp/Skoof/internal/libs/logger"
 	"github.com/gogapopp/Skoof/internal/service"
 	"github.com/gogapopp/Skoof/internal/storage/postgres"
+	"github.com/gogapopp/Skoof/internal/storage/postgres/auth"
+	"github.com/gogapopp/Skoof/internal/storage/postgres/community"
 )
 
 func main() {
 	var (
-		logger      = must(logger.New())
-		config      = must(config.New(".env"))
-		database    = must(postgres.New(config.PGConfig.DSN))
-		authService = service.New(config.PASS_SECRET, config.JWT_SECRET, database)
-		r           = chi.NewRouter()
+		logger = must(logger.New())
+		config = must(config.New(".env"))
+
+		conn        = must(postgres.New(config.PGConfig.DSN))
+		authDB      = auth.NewAuthStorage(conn)
+		communityDB = community.NewCommunityStorage(conn)
+
+		authService = service.New(config.PASS_SECRET, config.JWT_SECRET, authDB)
+		_           = communityDB
+
+		r = chi.NewRouter()
 	)
-	defer database.Close()
+	defer conn.Close()
 
 	// Initializes middlewares for all server requests,
-	// other middlewares can be initialized in the New function, see handler.New.
+	// other middlewares can be initialized in the New function, see httpserver.New().
 	r.Use(
 		middleware.RequestID,
 		middleware.Logger,
@@ -33,7 +41,7 @@ func main() {
 	)
 
 	// Initializes server routes and returns a completed http server.
-	server := handler.New(r, logger, authService, config)
+	server := httpserver.New(r, logger, config, authService)
 
 	logger.Infof("runnig server at: %s", config.HTTPConfig.Addr)
 	if err := server.ListenAndServe(); err != nil {

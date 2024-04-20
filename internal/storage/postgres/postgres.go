@@ -7,22 +7,18 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type repository struct {
-	conn *pgxpool.Pool
-}
-
-func New(dsn string) (*repository, error) {
+func New(dsn string) (*pgxpool.Pool, error) {
 	const op = "postgres.postgres.New"
 	ctx := context.Background()
-	db, err := pgxpool.New(ctx, dsn)
+	conn, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	err = db.Ping(ctx)
+	err = conn.Ping(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	tx, err := db.Begin(ctx)
+	tx, err := conn.Begin(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -44,11 +40,5 @@ func New(dsn string) (*repository, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	return &repository{
-		conn: db,
-	}, tx.Commit(ctx)
-}
-
-func (s *repository) Close() {
-	s.conn.Close()
+	return conn, tx.Commit(ctx)
 }

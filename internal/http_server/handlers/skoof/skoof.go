@@ -1,10 +1,11 @@
-package handler
+package skoof
 
 import (
 	"net/http"
 
 	"github.com/gogapopp/Skoof/components/skoof_pages"
-	"github.com/gogapopp/Skoof/internal/handler/middlewares"
+	"github.com/gogapopp/Skoof/internal/http_server/middlewares"
+	"github.com/gogapopp/Skoof/internal/libs/render"
 	"go.uber.org/zap"
 )
 
@@ -21,7 +22,7 @@ func SkoofPage(logger *zap.SugaredLogger) http.HandlerFunc {
 			}
 			_ = v
 			// TODO:
-			if err := render(r.Context(), w, skoof_pages.SkoofBase(skoof_pages.Skoof())); err != nil {
+			if err := render.Render(r.Context(), w, skoof_pages.SkoofBase(skoof_pages.Skoof())); err != nil {
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
 			}

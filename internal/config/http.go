@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// keys for env
 const (
 	httpHost = "HTTP_HOST"
 	httpPort = "HTTP_PORT"
@@ -16,8 +17,10 @@ type httpConfig struct {
 }
 
 func newHTTPConfig() (*httpConfig, error) {
-	host := os.Getenv(httpHost)
-	port := os.Getenv(httpPort)
+	var (
+		host = os.Getenv(httpHost)
+		port = os.Getenv(httpPort)
+	)
 	if len(port) == 0 {
 		return nil, errors.New("empty HTTP_PORT env")
 	}

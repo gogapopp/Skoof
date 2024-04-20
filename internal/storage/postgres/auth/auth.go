@@ -1,4 +1,4 @@
-package postgres
+package auth
 
 import (
 	"context"
@@ -10,9 +10,20 @@ import (
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func (s *repository) SignUp(ctx context.Context, user model.SignUpUser) error {
+type authStorage struct {
+	conn *pgxpool.Pool
+}
+
+func NewAuthStorage(conn *pgxpool.Pool) *authStorage {
+	return &authStorage{
+		conn: conn,
+	}
+}
+
+func (s *authStorage) SignUp(ctx context.Context, user model.SignUpUser) error {
 	const (
 		op    = "postgres.auth.SignUp"
 		query = "INSERT INTO users (email, username, password_hash, created_at, role) VALUES ($1, $2, $3, $4, $5);" // TODO: add metainfo
@@ -30,7 +41,7 @@ func (s *repository) SignUp(ctx context.Context, user model.SignUpUser) error {
 	return nil
 }
 
-func (s *repository) SignIn(ctx context.Context, user model.SignInUser) (int, string, error) {
+func (s *authStorage) SignIn(ctx context.Context, user model.SignInUser) (int, string, error) {
 	const (
 		op    = "postgres.auth.SignIn"
 		query = "SELECT user_id, role FROM users WHERE username=$1 AND password_hash=$2;"
