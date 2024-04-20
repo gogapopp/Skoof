@@ -33,10 +33,10 @@ func main() {
 	)
 
 	// Initializes server routes and returns a completed http server.
-	srv := handler.Routes(r, logger, authService, config)
+	server := handler.New(r, logger, authService, config)
 
 	logger.Infof("runnig server at: %s", config.HTTPConfig.Addr)
-	if err := srv.ListenAndServe(); err != nil {
+	if err := server.ListenAndServe(); err != nil {
 		logger.Errorf("server shutdown with error: %w", err)
 		os.Exit(1)
 	}

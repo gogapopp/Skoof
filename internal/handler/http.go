@@ -10,9 +10,9 @@ import (
 	"go.uber.org/zap"
 )
 
-const ReadHeaderTimeout = 10 * time.Second
+const readHeaderTimeout = 10 * time.Second
 
-func Routes(r *chi.Mux, logger *zap.SugaredLogger, authService authService, config *config.Config) *http.Server {
+func initHandlers(r *chi.Mux, logger *zap.SugaredLogger, authService authService) {
 	r.Get("/", HomePage(logger))
 
 	r.Get("/signin", SignInPage(logger, authService))
@@ -27,12 +27,16 @@ func Routes(r *chi.Mux, logger *zap.SugaredLogger, authService authService, conf
 		r.Get("/skoof", SkoofPage(logger))
 		r.Post("/skoof", SkoofPage(logger))
 	})
+}
 
-	srv := &http.Server{
+func New(r *chi.Mux, logger *zap.SugaredLogger, authService authService, config *config.Config) *http.Server {
+	initHandlers(r, logger, authService)
+
+	httpSrv := &http.Server{
 		Addr:              config.HTTPConfig.Addr,
 		Handler:           r,
-		ReadHeaderTimeout: ReadHeaderTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	return srv
+	return httpSrv
 }
